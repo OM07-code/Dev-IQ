@@ -7,8 +7,6 @@ import { initSocketCli } from "./lib/socket.js";
 
 import { ENV } from "./lib/env.js";
 import { connectDB } from "./lib/db.js";
-import { agenda } from "./lib/agenda.js";
-
 import chatRoutes from "./routes/chatRoutes.js";
 import sessionRoutes from "./routes/sessionRoute.js";
 import authRoute from "./routes/authRoute.js";
@@ -41,7 +39,7 @@ app.get("/health", (req, res) => {
 if (ENV.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
-  app.get("/{*any}", (req, res) => {
+  app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
   });
 }
@@ -49,8 +47,6 @@ if (ENV.NODE_ENV === "production") {
 const startServer = async () => {
   try {
     await connectDB();
-    await agenda.start();
-    console.log("✅ Agenda started");
     server.listen(ENV.PORT, () => console.log("Server is running on port:", ENV.PORT));
   } catch (error) {
     console.error("💥 Error starting the server", error);

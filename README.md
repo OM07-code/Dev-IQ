@@ -1,79 +1,84 @@
-<h1 align="center">✨ Full-Stack Interview Platform ✨</h1>
+# 🚀 DevIQ - Professional Technical Interview Platform
 
-![Demo App](/frontend/public/screenshot-for-readme.png)
+DevIQ is a high-performance, real-time technical interview platform designed to mirror the experience of top-tier engineering interviews. It features a LeetCode-inspired 3-column workspace, integrated video/chat, and a backend-native code execution engine.
 
-✨ Highlights:
+![DevIQ Demo](https://raw.githubusercontent.com/OM07-code/Dev-IQ/main/frontend/public/screenshot-for-readme.png)
 
-- 🧑‍💻 VSCode-Powered Code Editor
-- 🔐 Authentication via Clerk
-- 🎥 1-on-1 Video Interview Rooms
-- 🧭 Dashboard with Live Stats
-- 🔊 Mic & Camera Toggle, Screen Sharing & Recording
-- 💬 Real-time Chat Messaging
-- ⚙️ Secure Code Execution in Isolated Environment
-- 🎯 Auto Feedback — Success / Fail based on test cases
-- 🎉 Confetti on Success + Notifications on Fail
-- 🧩 Practice Problems Page (solo coding mode)
-- 🔒 Room Locking — allows only 2 participants
-- 🧠 Background Jobs with Inngest (async tasks)
-- 🧰 REST API with Node.js & Express
-- ⚡ Data Fetching & Caching via TanStack Query
-- 🤖 CodeRabbit for PR Analysis & Code Optimization
-- 🧑‍💻 Git & GitHub Workflow (branches, PRs, merges)
-- 🚀 Deployment on Sevalla (free-tier friendly)
+## ✨ Core Features
+
+- **LeetCode-Style Workspace**: A professional 3-column layout (Video | Problem/Notes/Whiteboard | Code/Terminal) with resizable panels.
+- **Multi-Problem Sessions**: Interviewers can dynamically inject multiple problems into an ongoing session and switch between them instantly.
+- **Backend-Native Code Execution**: High-speed, secure code execution for Javascript, Python, and Java powered by a custom backend runner.
+- **Collaborative Whiteboard**: Synchronized sketching area for system design and architectural discussions.
+- **Interviewer Toolkit**:
+  - **Private Notes**: Host-only persistent note-taking panel.
+  - **Problem Switcher**: Force-sync the candidate to specific problems.
+  - **Code Snapshots**: Automatically saves the final state of all problems upon session termination.
+- **Real-Time Synergy**:
+  - Synchronized Code Editor with language-aware syntax highlighting.
+  - Low-latency Video & Audio calls via Stream SDK.
+  - Integrated Session Chat.
+- **Custom JWT Auth**: Secure, self-contained authentication system (no external identity provider required).
 
 ---
 
-## 🧪 .env Setup
+## 🧪 Environment Configuration
 
 ### Backend (`/backend`)
-
+Create a `.env` file with:
 ```bash
 PORT=3000
 NODE_ENV=development
-
 DB_URL=your_mongodb_connection_url
-
-INNGEST_EVENT_KEY=your_inngest_event_key
-INNGEST_SIGNING_KEY=your_inngest_signing_key
+JWT_SECRET=your_secure_random_key
 
 STREAM_API_KEY=your_stream_api_key
 STREAM_API_SECRET=your_stream_api_secret
-
-CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
-CLERK_SECRET_KEY=your_clerk_secret_key
 
 CLIENT_URL=http://localhost:5173
 ```
 
 ### Frontend (`/frontend`)
-
+Create a `.env` file with:
 ```bash
-VITE_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
-
 VITE_API_URL=http://localhost:3000/api
-
 VITE_STREAM_API_KEY=your_stream_api_key
 ```
 
 ---
 
-## 🔧 Run the Backend
+## 🔧 Installation & Setup
 
-```bash
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/OM07-code/Dev-IQ.git
+   cd Dev-IQ
+   ```
 
-cd backend
-npm install
-npm run dev
-```
+2. **Start Backend**
+   ```bash
+   cd backend
+   npm install
+   npm run dev
+   ```
+
+3. **Start Frontend**
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
 
 ---
 
-## 🔧 Run the Frontend
+## 🛠️ Tech Stack
 
-```
-bash
-cd frontend
-npm install
-npm run dev
-```
+- **Frontend**: React, TailwindCSS, DaisyUI, Monaco Editor, React Query, Socket.io-client.
+- **Backend**: Node.js, Express, MongoDB, Socket.io, JWT.
+- **Real-time**: GetStream.io (Video & Chat), WebSockets.
+- **Infrastructure**: Custom isolated code execution runner.
+
+---
+
+## 🔒 Security
+DevIQ executes user code in a controlled backend environment. For production deployments, it is recommended to wrap the backend execution in a Dockerized sandbox or use a restricted user profile.
