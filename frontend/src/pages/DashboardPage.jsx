@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import { useUser } from "@clerk/clerk-react";
+import { useAuth } from "../context/AuthContext.jsx";
 import { useState } from "react";
 import { useActiveSessions, useCreateSession, useMyRecentSessions } from "../hooks/useSessions";
 
@@ -12,7 +12,7 @@ import CreateSessionModal from "../components/CreateSessionModal";
 
 function DashboardPage() {
   const navigate = useNavigate();
-  const { user } = useUser();
+  const { user, isLoaded } = useAuth();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [roomConfig, setRoomConfig] = useState({ problem: "", difficulty: "" });
 
@@ -42,9 +42,9 @@ function DashboardPage() {
   const recentSessions = recentSessionsData?.sessions || [];
 
   const isUserInSession = (session) => {
-    if (!user.id) return false;
+    if (!user?._id) return false;
 
-    return session.host?.clerkId === user.id || session.participant?.clerkId === user.id;
+    return session.host?._id === user._id || session.participant?._id === user._id;
   };
 
   return (

@@ -1,9 +1,10 @@
 import { Link, useLocation } from "react-router";
 import { BookOpenIcon, LayoutDashboardIcon, SparklesIcon } from "lucide-react";
-import { UserButton } from "@clerk/clerk-react";
+import { useAuth } from "../context/AuthContext.jsx";
 
 function Navbar() {
   const location = useLocation();
+  const { user, logout } = useAuth();
 
   console.log(location);
 
@@ -66,8 +67,18 @@ function Navbar() {
             </div>
           </Link>
 
-          <div className="ml-4 mt-2">
-            <UserButton />
+          <div className="ml-4 flex items-center gap-2">
+            {user && (
+              <>
+                <img src={user.profileImage} alt="Avatar" className="w-8 h-8 rounded-full" />
+                <button 
+                  onClick={logout}
+                  className="px-3 py-1.5 text-sm font-medium hover:bg-base-200 rounded-lg transition-colors text-base-content/70 hover:text-red-500"
+                >
+                  Log Out
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>

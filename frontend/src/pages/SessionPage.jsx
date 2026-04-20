@@ -1,4 +1,4 @@
-import { useUser } from "@clerk/clerk-react";
+import { useAuth } from "../context/AuthContext.jsx";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useEndSession, useJoinSession, useSessionById } from "../hooks/useSessions";
@@ -18,7 +18,7 @@ import VideoCallUI from "../components/VideoCallUI";
 function SessionPage() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { user } = useUser();
+  const { user } = useAuth();
   const [output, setOutput] = useState(null);
   const [isRunning, setIsRunning] = useState(false);
 

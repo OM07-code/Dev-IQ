@@ -15,10 +15,9 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    clerkId: {
+    password: {
       type: String,
       required: true,
-      unique: true,
     },
   },
   { timestamps: true } // createdAt, updatedAt
