@@ -24,8 +24,21 @@ export const sessionApi = {
     const response = await axiosInstance.post(`/sessions/${id}/join`);
     return response.data;
   },
-  endSession: async (id) => {
-    const response = await axiosInstance.post(`/sessions/${id}/end`);
+  endSession: async ({ id, codeSnapshot }) => {
+    const response = await axiosInstance.post(`/sessions/${id}/end`, { codeSnapshot });
+    return response.data;
+  },
+  updateNotes: async ({ id, notes }) => {
+    const response = await axiosInstance.patch(`/sessions/${id}/notes`, { notes });
+    return response.data;
+  },
+  updateSessionState: async ({ id, problemToAdd, newActiveProblem, problemId, code }) => {
+    const response = await axiosInstance.put(`/sessions/${id}/state`, {
+      problemToAdd,
+      newActiveProblem,
+      problemId,
+      code,
+    });
     return response.data;
   },
   getStreamToken: async () => {

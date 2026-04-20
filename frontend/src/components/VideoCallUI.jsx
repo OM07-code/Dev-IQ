@@ -34,20 +34,20 @@ function VideoCallUI({ chatClient, channel }) {
     <div className="h-full flex gap-3 relative str-video">
       <div className="flex-1 flex flex-col gap-3">
         {/* Participants count badge and Chat Toggle */}
-        <div className="flex items-center justify-between gap-2 bg-base-100 p-3 rounded-lg shadow">
-          <div className="flex items-center gap-2">
-            <UsersIcon className="w-5 h-5 text-primary" />
-            <span className="font-semibold">
-              {participantCount} {participantCount === 1 ? "participant" : "participants"}
+        <div className="flex items-center justify-between gap-2 bg-base-100 p-2 rounded-lg shadow overflow-hidden">
+          <div className="flex items-center gap-1.5 min-w-0">
+            <UsersIcon className="size-4 text-primary shrink-0" />
+            <span className="font-semibold text-xs truncate">
+              {participantCount} {participantCount === 1 ? "user" : "users"}
             </span>
           </div>
           {chatClient && channel && (
             <button
               onClick={() => setIsChatOpen(!isChatOpen)}
-              className={`btn btn-sm gap-2 ${isChatOpen ? "btn-primary" : "btn-ghost"}`}
+              className={`btn btn-xs gap-1 shrink-0 ${isChatOpen ? "btn-primary" : "btn-ghost"}`}
               title={isChatOpen ? "Hide chat" : "Show chat"}
             >
-              <MessageSquareIcon className="size-4" />
+              <MessageSquareIcon className="size-3" />
               Chat
             </button>
           )}
@@ -57,7 +57,7 @@ function VideoCallUI({ chatClient, channel }) {
           <SpeakerLayout />
         </div>
 
-        <div className="bg-base-100 p-3 rounded-lg shadow flex justify-center">
+        <div className="bg-base-100 p-2 rounded-lg shadow flex justify-center scale-90 origin-bottom">
           <CallControls onLeave={() => navigate("/dashboard")} />
         </div>
       </div>
@@ -66,8 +66,8 @@ function VideoCallUI({ chatClient, channel }) {
 
       {chatClient && channel && (
         <div
-          className={`flex flex-col rounded-lg shadow overflow-hidden bg-[#272a30] transition-all duration-300 ease-in-out ${
-            isChatOpen ? "w-80 opacity-100" : "w-0 opacity-0"
+          className={`absolute top-0 left-0 w-full h-full z-10 flex flex-col rounded-lg shadow overflow-hidden bg-[#272a30] transition-all duration-300 ease-in-out ${
+            isChatOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
           }`}
         >
           {isChatOpen && (

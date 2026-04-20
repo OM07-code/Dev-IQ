@@ -26,10 +26,33 @@ const sessionSchema = new mongoose.Schema(
       enum: ["active", "completed"],
       default: "active",
     },
+    // array of problem IDs pushed into the session
+    problemsList: {
+      type: [String],
+      default: [],
+    },
+    activeProblem: {
+      type: String,
+      default: "",
+    },
     // stream video call ID
     callId: {
       type: String,
       default: "",
+    },
+    notes: {
+      type: String,
+      default: "",
+    },
+    codeSnapshot: {
+      type: String,
+      default: "",
+    },
+    // Maps problem ID -> latest code string
+    codeSnapshots: {
+      type: Map,
+      of: String,
+      default: {},
     },
   },
   { timestamps: true }

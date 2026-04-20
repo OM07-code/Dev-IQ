@@ -1,8 +1,11 @@
 import { Code2, Clock, Users, Trophy, Loader } from "lucide-react";
 import { getDifficultyBadgeClass } from "../lib/utils";
 import { formatDistanceToNow } from "date-fns";
+import { useAuth } from "../context/AuthContext.jsx";
 
-function RecentSessions({ sessions, isLoading }) {
+function RecentSessions({ sessions, isLoading, onReview }) {
+  const { user } = useAuth();
+  
   return (
     <div className="card bg-base-100 border-2 border-accent/20 hover:border-accent/30 mt-8">
       <div className="card-body">
@@ -50,11 +53,16 @@ function RecentSessions({ sessions, isLoading }) {
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="font-bold text-base mb-1 truncate">{session.problem}</h3>
-                      <span
-                        className={`badge badge-sm ${getDifficultyBadgeClass(session.difficulty)}`}
-                      >
-                        {session.difficulty}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`badge badge-sm ${getDifficultyBadgeClass(session.difficulty)}`}
+                        >
+                          {session.difficulty}
+                        </span>
+                        <span className={`badge badge-sm ${session.host?._id === user?._id || session.host === user?._id ? 'badge-primary badge-outline' : 'badge-secondary badge-outline'}`}>
+                          {session.host?._id === user?._id || session.host === user?._id ? 'Interviewer' : 'Candidate'}
+                        </span>
+                      </div>
                     </div>
                   </div>
 
@@ -78,9 +86,12 @@ function RecentSessions({ sessions, isLoading }) {
 
                   <div className="flex items-center justify-between pt-3 border-t border-base-300">
                     <span className="text-xs font-semibold opacity-80 uppercase">Completed</span>
-                    <span className="text-xs opacity-40">
-                      {new Date(session.updatedAt).toLocaleDateString()}
-                    </span>
+                    <button 
+                      onClick={() => onReview(session)}
+                      className="btn btn-xs btn-outline btn-primary"
+                    >
+                      Review Interview
+                    </button>
                   </div>
                 </div>
               </div>

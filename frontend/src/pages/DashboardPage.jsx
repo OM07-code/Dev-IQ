@@ -9,11 +9,13 @@ import StatsCards from "../components/StatsCards";
 import ActiveSessions from "../components/ActiveSessions";
 import RecentSessions from "../components/RecentSessions";
 import CreateSessionModal from "../components/CreateSessionModal";
+import ReviewModal from "../components/ReviewModal";
 
 function DashboardPage() {
   const navigate = useNavigate();
   const { user, isLoaded } = useAuth();
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [selectedReviewSession, setSelectedReviewSession] = useState(null);
   const [roomConfig, setRoomConfig] = useState({ problem: "", difficulty: "" });
 
   const createSessionMutation = useCreateSession();
@@ -67,7 +69,11 @@ function DashboardPage() {
             />
           </div>
 
-          <RecentSessions sessions={recentSessions} isLoading={loadingRecentSessions} />
+          <RecentSessions 
+            sessions={recentSessions} 
+            isLoading={loadingRecentSessions} 
+            onReview={(session) => setSelectedReviewSession(session)} 
+          />
         </div>
       </div>
 
@@ -78,6 +84,12 @@ function DashboardPage() {
         setRoomConfig={setRoomConfig}
         onCreateRoom={handleCreateRoom}
         isCreating={createSessionMutation.isPending}
+      />
+
+      <ReviewModal 
+        isOpen={!!selectedReviewSession}
+        onClose={() => setSelectedReviewSession(null)}
+        session={selectedReviewSession}
       />
     </>
   );

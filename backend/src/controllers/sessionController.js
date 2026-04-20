@@ -15,7 +15,14 @@ export async function createSession(req, res) {
     const callId = `session_${Date.now()}_${Math.random().toString(36).substring(7)}`;
 
     // create session in db
-    const session = await Session.create({ problem, difficulty, host: userId, callId });
+    const session = await Session.create({ 
+      problem, 
+      difficulty, 
+      host: userId, 
+      callId,
+      activeProblem: problem,
+      problemsList: [problem]
+    });
 
     // create stream video call
     await streamClient.video.call("default", callId).getOrCreate({
@@ -68,7 +75,15 @@ export async function getMyRecentSessions(req, res) {
       .sort({ createdAt: -1 })
       .limit(20);
 
-    res.status(200).json({ sessions });
+    const secureSessions = sessions.map((session) => {
+      const sessionObj = session.toObject();
+      if (sessionObj.host.toString() !== userId.toString()) {
+        delete sessionObj.notes;
+      }
+      return sessionObj;
+    });
+
+    res.status(200).json({ sessions: secureSessions });
   } catch (error) {
     console.log("Error in getMyRecentSessions controller:", error.message);
     res.status(500).json({ message: "Internal Server Error" });
@@ -85,7 +100,13 @@ export async function getSessionById(req, res) {
 
     if (!session) return res.status(404).json({ message: "Session not found" });
 
-    res.status(200).json({ session });
+    const sessionObj = session.toObject();
+    // Do not expose private interviewer notes to the candidate
+    if (sessionObj.host._id.toString() !== req.user._id.toString()) {
+      delete sessionObj.notes;
+    }
+
+    res.status(200).json({ session: sessionObj });
   } catch (error) {
     console.log("Error in getSessionById controller:", error.message);
     res.status(500).json({ message: "Internal Server Error" });
@@ -126,9 +147,35 @@ export async function joinSession(req, res) {
   }
 }
 
+export async function updateNotes(req, res) {
+  try {
+    const { id } = req.params;
+    const { notes } = req.body;
+    const userId = req.user._id;
+
+    const session = await Session.findById(id);
+
+    if (!session) return res.status(404).json({ message: "Session not found" });
+
+    // Only host can update notes
+    if (session.host.toString() !== userId.toString()) {
+      return res.status(403).json({ message: "Only the interviewer can update private notes" });
+    }
+
+    session.notes = notes;
+    await session.save();
+
+    res.status(200).json({ session, message: "Notes updated successfully" });
+  } catch (error) {
+    console.log("Error in updateNotes controller:", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
 export async function endSession(req, res) {
   try {
     const { id } = req.params;
+    const { codeSnapshot } = req.body;
     const userId = req.user._id;
 
     const session = await Session.findById(id);
@@ -154,11 +201,54 @@ export async function endSession(req, res) {
     await channel.delete();
 
     session.status = "completed";
+    if (codeSnapshot !== undefined) {
+      session.codeSnapshot = codeSnapshot;
+    }
     await session.save();
 
     res.status(200).json({ session, message: "Session ended successfully" });
   } catch (error) {
     console.log("Error in endSession controller:", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
+export async function updateSessionState(req, res) {
+  try {
+    const { id } = req.params;
+    const { problemToAdd, newActiveProblem } = req.body;
+    const userId = req.user._id;
+
+    const session = await Session.findById(id);
+
+    if (!session) return res.status(404).json({ message: "Session not found" });
+
+    // Only host can modify session problems
+    if (session.host.toString() !== userId.toString()) {
+      return res.status(403).json({ message: "Only the interviewer can update the session problems" });
+    }
+
+    if (problemToAdd && !session.problemsList.includes(problemToAdd)) {
+      session.problemsList.push(problemToAdd);
+    }
+    
+    if (newActiveProblem) {
+      session.activeProblem = newActiveProblem;
+    }
+
+    // if frontend supplies a codeMap stringify or updates, we can process here.
+    // actually, for map fields, we can do session.set(path, val). Let's let the socket handle transient code for now 
+    // or rely on `endSession` to capture the final `codeSnapshot`. Or they can send `codeUpdate: { problemId, code }`.
+    const { problemId, code } = req.body;
+    if (problemId && code !== undefined) {
+      session.codeSnapshots.set(problemId, code);
+    }
+
+    await session.save();
+
+    res.status(200).json({ session });
+  } catch (error) {
+    console.log("Error in updateSessionState controller:", error.message);
     res.status(500).json({ message: "Internal Server Error" });
   }
 }

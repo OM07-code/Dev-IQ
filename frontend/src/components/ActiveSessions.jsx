@@ -9,8 +9,11 @@ import {
 } from "lucide-react";
 import { Link } from "react-router";
 import { getDifficultyBadgeClass } from "../lib/utils";
+import { useAuth } from "../context/AuthContext.jsx";
 
 function ActiveSessions({ sessions, isLoading, isUserInSession }) {
+  const { user } = useAuth();
+  
   return (
     <div className="lg:col-span-2 card bg-base-100 border-2 border-primary/20 hover:border-primary/30 h-full">
       <div className="card-body">
@@ -61,12 +64,17 @@ function ActiveSessions({ sessions, isLoading, isUserInSession }) {
                           {session.difficulty.slice(0, 1).toUpperCase() +
                             session.difficulty.slice(1)}
                         </span>
+                        {isUserInSession(session) && (
+                          <span className={`badge badge-sm ${session.host?._id === user?._id || session.host === user?._id ? 'badge-primary badge-outline' : 'badge-secondary badge-outline'}`}>
+                            {session.host?._id === user?._id || session.host === user?._id ? 'You: Interviewer' : 'You: Candidate'}
+                          </span>
+                        )}
                       </div>
 
                       <div className="flex items-center gap-4 text-sm opacity-80">
                         <div className="flex items-center gap-1.5">
-                          <CrownIcon className="size-4" />
-                          <span className="font-medium">{session.host?.name}</span>
+                          <CrownIcon className="size-4 text-warning" />
+                          <span className="font-medium">Interviewer: <span className="text-base-content font-bold">{session.host?.name}</span></span>
                         </div>
                         <div className="flex items-center gap-1.5">
                           <UsersIcon className="size-4" />
